@@ -17,14 +17,10 @@ app.use(express.static('public'));
 
 app.use('/', indexRouter);
 
-mongoose.connect(process.env.DB_CONNECTION, // using dotenv to hide vulnarable data
-    { useUnifiedTopology: true , useNewUrlParser: true},
-    () => console.log('Succesfully connected') // callback function when succesfully connected
-);
 
-//mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true , useNewUrlParser: true});
-//const db = mongoose.createConnection();
-//db.on('error', error => console.error(error));
-//db.once('open', () => console.log('Connected to Mongoose'));
+mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true , useNewUrlParser: true});
+const db = mongoose.createConnection();
+db.on('error', error => console.error(error));
+db.once('open', () => console.log('Connected to Mongoose'));
 
 app.listen(process.env.PORT || 3000);
