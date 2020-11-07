@@ -20,7 +20,7 @@ app.use('/', indexRouter);
 try{
     mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true , useNewUrlParser: true});
 }catch (err){
-    return;
+    console.log('Access denied');
 };
 
 const db = mongoose.createConnection();
