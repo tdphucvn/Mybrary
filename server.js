@@ -17,8 +17,12 @@ app.use(express.static('public'));
 
 app.use('/', indexRouter);
 
+try{
+    mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true , useNewUrlParser: true});
+}catch (err){
+    return;
+};
 
-mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true , useNewUrlParser: true});
 const db = mongoose.createConnection();
 db.on('error', error => console.error(error));
 db.once('open', () => console.log('Connected to Mongoose'));
