@@ -18,6 +18,7 @@ const bodyParser = require('body-parser')
 //Routes
 const indexRouter = require('./routes/index');
 const authorRouter = require('./routes/authors');
+const bookRouter = require('./routes/books');
 
 //Using EJS as view engine
 app.set('view engine', 'ejs');
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({limit: '10mb', extended: false}));
 //Middleware routes
 app.use('/', indexRouter);
 app.use('/authors', authorRouter);
+app.use('/books', bookRouter);
 
 //Connection to online cloud database
 try{
