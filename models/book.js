@@ -1,5 +1,8 @@
+//require database library
 const mongoose = require('mongoose');
+//pathing
 const path = require('path');
+//saving the img path
 const coverImageBasePath = 'uploads/bookCovers';
 
 //creating a schema for saving to database
@@ -29,12 +32,15 @@ const bookSchema = mongoose.Schema({
         required: true
     },
     author: {
+        //Required an author object
         type: mongoose.Schema.Types.ObjectId,
         require: true,
         ref: 'Author'
     }
 });
 
+
+//???
 bookSchema.virtual('coverImagePath').get(function(){
     if(this.coverImageName != null){
         return path.join('/', coverImageBasePath, this.coverImageName);

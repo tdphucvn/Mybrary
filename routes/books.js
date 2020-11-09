@@ -1,17 +1,24 @@
 //Creating routes with express
 const express = require('express');
 const router = express.Router();
+//creating a path and storing the data
 const multer = require('multer');
+//pathing
 const path = require('path');
+//working with files
 const fs = require('fs');
 //require Book schema
 const Book = require('../models/book');
 const Author = require('../models/author');
+//path for stored data of imported images
 const uploadPath = path.join('public', Book.coverImageBasePath);
+//allowed image types
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+//storing path, if the repository is not created yet, it will create one on its own
 const upload = multer({
     dest: uploadPath,
     fileFilter: (req, file, callback) => {
+        //params err(null in this case), boolean
         callback(null, imageMimeTypes.includes(file.mimetype));
     }
 });
@@ -29,8 +36,9 @@ router.get('/', async (req, res) => {
         query = query.gte('publishDate', req.query.publishedAfter);
     }
     try{
+        //executes the query above and store the data in variable books
         const books = await query.exec();
-        console.log(books, req.query);
+        //rendering index.ejs and sending the following params
         res.render('books/index', {
             books: books,
             searchOptions: req.query
@@ -47,8 +55,12 @@ router.get('/new', (req, res) => {
 });
 
 //Create Book Route
+//store the image path 
 router.post('/', upload.single('cover'), async (req, res) => {
+    //if the req.file is not null then fileName = req.file
+    //else req.file.filename: null
     const fileName = req.file != null ? req.file.filename : null;
+    //creating an object
     const book = new Book({
         title: req.body.title,
         author: req.body.author,
@@ -58,10 +70,12 @@ router.post('/', upload.single('cover'), async (req, res) => {
         description: req.body.description
     });
     try{
+        //saving the object to database
         const newBook = await book.save();
         res.redirect('books');
     } catch {
         if(book.coverImageName != null){
+            //remove the stored file due to error
             removeBookCover(book.coverImageName);
         };
         renderNewPage(res, book, true);
@@ -70,7 +84,9 @@ router.post('/', upload.single('cover'), async (req, res) => {
 
 async function renderNewPage(res, book, hasError = false){
     try{
+        //load the list of authors from database
         const authors = await Author.find({});
+        //params that will be sent to frontend
         const params = {
             authors: authors,
             book: book
@@ -82,6 +98,7 @@ async function renderNewPage(res, book, hasError = false){
     }
 }
 
+//removing the path of the image if an error occurs
 function removeBookCover(filename) {
     fs.unlink(path.join(uploadPath, filename), err => {
         if (err) console.log(err);
