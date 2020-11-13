@@ -1,9 +1,5 @@
 //require database library
 const mongoose = require('mongoose');
-//pathing
-const path = require('path');
-//saving the img path
-const coverImageBasePath = 'uploads/bookCovers';
 
 //creating a schema for saving to database
 const bookSchema = mongoose.Schema({
@@ -27,7 +23,14 @@ const bookSchema = mongoose.Schema({
         required: true,
         default: Date.now
     },
-    coverImageName: {
+    //binary data are stored as buffer type
+    coverImage: {
+        type: Buffer,
+        required: true
+    },
+    //since we are storing a binery version of the image
+    //we need the type (png, jpg...) to parse it back when loading the page
+    coverImageType:{
         type: String,
         required: true
     },
@@ -40,12 +43,12 @@ const bookSchema = mongoose.Schema({
 });
 
 
-//???
+//If we required somewhere in the code the following virtual attribute, it will return data as follows
 bookSchema.virtual('coverImagePath').get(function(){
-    if(this.coverImageName != null){
-        return path.join('/', coverImageBasePath, this.coverImageName);
+    if(this.coverImage != null && this.coverImageType != null){
+        //returning the data back when the attribute is called outside the file
+        return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`;
     };
 });
 
 module.exports = mongoose.model('Book', bookSchema);
-module.exports.coverImageBasePath = coverImageBasePath;
