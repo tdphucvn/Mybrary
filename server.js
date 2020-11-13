@@ -13,6 +13,8 @@ const expressLayouts = require ('express-ejs-layouts');
 const mongoose = require('mongoose');
 //requiring bodyparser library for JSON data
 const bodyParser = require('body-parser')
+//requring libraray for put and delete
+const methodOverride = require('method-override');
 
 
 //Routes
@@ -27,6 +29,7 @@ app.set('views', __dirname + '/views');
 //setting the default view
 app.set('layout', 'layouts/layout');
 app.use(expressLayouts);
+app.use(methodOverride('_method'));
 //Public files CSS/JS
 app.use(express.static('public'));
 //Parsing to JSON data

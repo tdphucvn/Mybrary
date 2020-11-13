@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 //require Author schema
 const Author = require('../models/author');
-
+const Book = require('../models/book');
 //All Authors Route, Searching authors
 router.get('/', async (req, res) => {
     //from default is searchOptins an empty object
@@ -45,13 +45,74 @@ router.post('/', async (req, res) => {
         //saving an author to the database
         const newAuthor = await author.save();
         //redirecting 
-        res.redirect('authors')
+        res.redirect(`authors/${newAuthor.id}`);
     } catch {
         res.render('authors/new', {
             author: author,
             //throwing an error message
             errorMessage: 'Error creating Author'
         });
+    };
+});
+
+router.get('/:id', async (req, res) => {
+    try{
+        const author = await Author.findById(req.params.id);
+        const books = await Book.find({author: author.id}).limit(6).exec();
+        res.render('authors/show', {
+            author:author,
+            booksByAuthor: books
+        });
+    }catch{
+        res.redirect('/');
+    }
+});
+
+router.get('/:id/edit', async (req, res) => {
+    try {
+        const author = await Author.findById(req.params.id);
+        res.render('authors/edit', {author : author});
+    } catch {
+        res.redirect('authors/index');
+    };
+});
+
+router.put('/:id', async (req, res) => {
+        let author;
+        //async call, mongoose work asynchronously
+        try {
+            author = await Author.findById(req.params.id);
+            author.name = req.body.name;
+            await author.save();
+            //redirecting 
+            res.redirect(`/authors/${author.id}`);
+        } catch {
+            if (author == null){
+                res.redirect('/');
+            }else{
+                res.render('authors/new', {
+                    author: author,
+                    //throwing an error message
+                    errorMessage: 'Error Updating'
+                });    
+            }
+        };
+});
+
+router.delete('/:id', async (req, res) => {
+    let author;
+    //async call, mongoose work asynchronously
+    try {
+        author = await Author.findById(req.params.id);
+        await author.remove();
+        //redirecting 
+        res.redirect('/authors');
+    } catch {
+        if (author == null){
+            res.redirect('/');
+        }else{
+            res.redirect(`/authors/${author.id}`);    
+        };
     };
 });
 
