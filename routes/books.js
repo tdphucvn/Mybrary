@@ -60,26 +60,29 @@ router.post('/', async (req, res) => {
     }
 });
 
+//Show book and all paramas
 router.get('/:id', async (req, res) => {
     try {
         const book = await Book.findById(req.params.id).populate('author')
-        .exec();
+        .exec();//executing the queue
         res.render('books/show', {book: book});
     } catch {
         res.redirect('/');
     };
 })
 
+//Edit page
 router.get('/:id/edit', async (req, res) => {
     try {
         const book = await Book.findById(req.params.id);
+        //using an async function to render the page
         renderEditPage(res, book);
     } catch {
         res.redirect('/');
     };
 });
 
-
+//updating the data in the databse
 router.put('/:id', async (req, res) => {
     let book;
 
