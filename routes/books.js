@@ -50,8 +50,8 @@ router.post('/', async (req, res) => {
         pageCount: req.body.pageCount,
         description: req.body.description
     });
-    saveCover(book, req.body.cover)
     try{
+        saveCover(book, req.body.cover)
         //saving the object to database
         const newBook = await book.save();
         res.redirect(`/books/${newBook.id}`);
