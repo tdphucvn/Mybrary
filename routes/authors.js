@@ -4,6 +4,7 @@ const router = express.Router();
 //require Author schema
 const Author = require('../models/author');
 const Book = require('../models/book');
+
 //All Authors Route, Searching authors
 router.get('/', async (req, res) => {
     //from default is searchOptins an empty object
@@ -111,6 +112,7 @@ router.delete('/:id', async (req, res) => {
         if (author == null){
             res.redirect('/');
         }else{
+            Alert('Can not delete an Author with books');
             res.redirect(`/authors/${author.id}`);    
         };
     };
